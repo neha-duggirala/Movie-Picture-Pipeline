@@ -36,7 +36,7 @@ jobs:
         run: cd starter/backend && pipenv install
 
       - name: Run the linter
-        run: cd starter/backend && pipenv run lint
+        run: cd starter/backend && pipenv run flake8
 
   testing:
     runs-on: ubuntu-latest
