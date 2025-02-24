@@ -1,0 +1,50 @@
+
+name: Frontend CI/CD
+on:
+    pull_request:
+        branches:
+            - master
+        paths:
+            - 'starter/frontend/**'
+    workflow_dispatch:
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                node-version: '14'
+            - name: Install dependencies
+              run: |
+                npm install
+              working-directory: starter/frontend
+            - name: Run ESLint
+              run: npm run lint
+              working-directory: starter/frontend
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                node-version: '14'
+            - name: Install dependencies
+              run: npm install
+              working-directory: starter/frontend
+            - name: Run tests
+              run: npm test --passWithNoTests
+              working-directory: starter/frontend
+    build:
+        runs-on: ubuntu-latest
+        needs: [lint, test]
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: Build Docker image
+              run: docker build -t frontend-app:latest .
+              working-directory: starter/frontend
