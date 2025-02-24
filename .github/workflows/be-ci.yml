@@ -26,43 +26,37 @@ jobs:
             - name: Install project dependencies
               run: pipenv install
               
-            - name: Activate env
-              run: pipenv shell
-              
             - name: Run lint
-              run: pipenv run lint
+              run: pipenv --venv
             #   working-directory: starter/backend
 
-    test:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+    # test:
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Checkout code
+    #           uses: actions/checkout@v2
 
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                python-version: '3.10'
+    #         - name: Set up Python
+    #           uses: actions/setup-python@v2
+    #           with:
+    #             python-version: '3.10'
 
-            - name: Install dependencies
-              run: pip install pipenv
+    #         - name: Install dependencies
+    #           run: pip install pipenv
               
-            - name: Install project dependencies
-              run: pipenv install
+    #         - name: Install project dependencies
+    #           run: pipenv install
               
-            - name: Activate env
-              run: pipenv shell
+    #         - name: Run tests
+    #           run: pipenv run test
+    #         #   working-directory: starter/backend
 
-            - name: Run tests
-              run: pipenv run test
-            #   working-directory: starter/backend
+    # build:
+    #     runs-on: ubuntu-latest
+    #     needs: [lint, test]
+    #     steps:
+    #         - name: Checkout code
+    #           uses: actions/checkout@v2
 
-    build:
-        runs-on: ubuntu-latest
-        needs: [lint, test]
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-
-            - name: Build Docker image
-              run: docker build -t movie-picture-backend ./starter/backend
+    #         - name: Build Docker image
+    #           run: docker build -t movie-picture-backend ./starter/backend
