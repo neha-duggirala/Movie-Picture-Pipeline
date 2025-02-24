@@ -24,14 +24,15 @@ jobs:
               run: pip install pipenv
               
             - name: Install project dependencies
-              run: pipenv install
+              run: pipenv install --dev
 
             - name: Install flake8
-              run: pipenv install flake8
+              run: pipenv run pip install flake8
               
             - name: Run lint
               run: pipenv run flake8
               working-directory: starter/backend
+
     test:
         runs-on: ubuntu-latest
         steps:
