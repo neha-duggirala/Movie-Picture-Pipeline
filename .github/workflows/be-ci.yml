@@ -25,9 +25,12 @@ jobs:
               
             - name: Install project dependencies
               run: pipenv install
+
+            - name: Install flake8
+              run: pipenv install flake8
               
             - name: Run lint
-              run: pipenv run lint
+              run: pipenv run flake8
               working-directory: starter/backend
     test:
         runs-on: ubuntu-latest
