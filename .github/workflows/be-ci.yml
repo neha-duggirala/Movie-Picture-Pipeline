@@ -1,64 +1,83 @@
-name: BE-CI
 
+# Workflow name
+name: backend-ci-workflow
+
+# Triggers 
 on:
-    pull_request:
-        branches:
-            - main
-        paths:
-            - 'starter/backend/**'
-    workflow_dispatch:
+  # Manual trigger using the workflow_dispatch event
+  workflow_dispatch:
+  # Automatic trigger on pull request events targeting the main branch
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
 
+# Jobs in the workflow: linting, testing and build
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Set up Python 3.10
-              uses: actions/setup-python@v5
-              with:
-                python-version: '3.10' 
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
 
-            - name: Install pipenv
-              run: pip install pipenv --user
+      - name: Install pipenv
+        run: pip install pipenv --user
 
-            - name: Install flake8
-              run: pip install flake8
+      - name: Install flake8
+        run: pip install flake8
 
-            - name: Install dependencies
-              run: cd starter/backend && pipenv install
+      - name: Install dependencies
+        run: cd backend && pipenv install
 
-            - name: Run the linter
-              run: cd starter/backend && pipenv run lint
+      - name: Run the linter
+        run: cd backend && pipenv run lint
 
-    # test:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout code
-    #           uses: actions/checkout@v2
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    #         - name: Set up Python
-    #           uses: actions/setup-python@v2
-    #           with:
-    #             python-version: '3.10'
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
 
-    #         - name: Install dependencies
-    #           run: pip install pipenv
-              
-    #         - name: Install project dependencies
-    #           run: pipenv install
-              
-    #         - name: Run tests
-    #           run: pipenv run test
-    #         #   working-directory: starter/backend
+      - name: Install pipenv
+        run: pip install pipenv --user      
 
-    # build:
-    #     runs-on: ubuntu-latest
-    #     needs: [lint, test]
-    #     steps:
-    #         - name: Checkout code
-    #           uses: actions/checkout@v2
+      - name: Install dependencies
+        run: cd backend && pipenv install
 
-    #         - name: Build Docker image
-    #           run: docker build -t movie-picture-backend ./starter/backend
+      - name: Run tests
+        run: cd backend && pipenv run test
+
+  build:
+    needs: [linting, testing]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10 
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+  
+      - name: Install pipenv
+        run: pip install pipenv --user
+
+      - name: Install dependencies
+        run: cd backend && pipenv install
+
+      - name: Build docker image
+        run: cd backend && docker build --tag mp-backend:latest .
+        
+      - name: Run docker container
+        run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
