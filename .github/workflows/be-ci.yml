@@ -37,10 +37,10 @@ jobs:
         run: pip install flake8
 
       - name: Install dependencies
-        run: cd backend && pipenv install
+        run: cd starter/backend && pipenv install
 
       - name: Run the linter
-        run: cd backend && pipenv run lint
+        run: cd starter/backend && pipenv run lint
 
   testing:
     runs-on: ubuntu-latest
@@ -57,10 +57,10 @@ jobs:
         run: pip install pipenv --user      
 
       - name: Install dependencies
-        run: cd backend && pipenv install
+        run: cd starter/backend && pipenv install
 
       - name: Run tests
-        run: cd backend && pipenv run test
+        run: cd starter/backend && pipenv run test
 
   build:
     needs: [linting, testing]
@@ -78,13 +78,13 @@ jobs:
         run: pip install pipenv --user
 
       - name: Install dependencies
-        run: cd backend && pipenv install
+        run: cd starter/backend && pipenv install
 
       - name: Build docker image
-        run: cd backend && docker build --tag mp-backend:latest .
+        run: cd starter/backend && docker build --tag mp-backend:latest .
         
       - name: Run docker container
-        run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
+        run: cd starter/backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
 
 
 
