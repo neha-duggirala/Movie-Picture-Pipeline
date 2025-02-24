@@ -56,7 +56,7 @@ jobs:
         run: cd starter/backend && pipenv install
 
       - name: Run tests
-        run: cd starter/backend && pipenv run test
+        run: cd starter/backend && pipenv run pytest -v
 
   build:
     needs: [linting, testing]
