@@ -71,6 +71,9 @@ jobs:
               id: login-ecr
               uses: aws-actions/amazon-ecr-login@v2
 
+            - name: show the aws service account id
+              run:  aws sts get-caller-identity 
+
             - name: Build docker image with SHA 
               env:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
