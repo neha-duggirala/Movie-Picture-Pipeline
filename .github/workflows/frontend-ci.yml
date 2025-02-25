@@ -1,5 +1,5 @@
 
-name: Frontend CI Workflow
+name: Frontend Continuous Integration
 on:
     pull_request:
         branches:

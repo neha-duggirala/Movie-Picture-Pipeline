@@ -1,11 +1,12 @@
-name: Backend CD Workflow
+name: Backend Continuous Deployment
+# Triggers
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - 'starter/backend/**'
-    workflow_dispatch:
+  # Manual trigger using the workflow_dispatch event
+  workflow_dispatch:
+  # Automatic trigger on push events targeting the main branch
+  push:
+    branches:
+      - main
 
 # Jobs in the workflow: linting, testing and build
 jobs:

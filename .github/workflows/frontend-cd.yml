@@ -1,5 +1,5 @@
 # Workflow name
-name: Frontend CD Workflow
+name: Frontend Continuous Deployment
 
 # Triggers
 on:
