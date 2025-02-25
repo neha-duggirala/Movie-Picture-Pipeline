@@ -103,6 +103,9 @@ jobs:
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
               run: cd starter/frontend/k8s && kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-      
+              
+            - name: Kube context
+              run: kubectl config get-contexts
+
             - name: Deploy application to EKS cluster
               run: cd starter/frontend/k8s && kustomize build | kubectl apply -f - --validate=false
