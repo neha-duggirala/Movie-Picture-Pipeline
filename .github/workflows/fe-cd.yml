@@ -91,6 +91,9 @@ jobs:
             - name: Update kubeconfig
               run: aws eks update-kubeconfig --name cluster --region us-east-1
       
+            - name: get the services names
+              run:  kubectl get svc
+              
             - name: Set image tag to newer version
               env:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
