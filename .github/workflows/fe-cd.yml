@@ -77,8 +77,23 @@ jobs:
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
               run: cd starter/frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+           
+            - name: Push to ECR
+              env:
+                REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                REPOSITORY: frontend
+                IMAGE_TAG: ${{ github.sha }}
+              run: cd frontend && docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       
-        
-            # - name: Build Docker image
-            #   run: docker build -t frontend-app:latest .
-            #   working-directory: starter/frontend
+            - name: Update kubeconfig
+              run: aws eks update-kubeconfig --name cluster --region us-east-1
+      
+            - name: Set image tag to newer version
+              env:
+                REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                REPOSITORY: frontend
+                IMAGE_TAG: ${{ github.sha }}
+              run: cd frontend/k8s && kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+      
+            - name: Deploy application to EKS cluster
+              run: cd frontend/k8s && kustomize build | kubectl apply -f -
