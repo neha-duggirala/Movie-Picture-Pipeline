@@ -90,7 +90,7 @@ jobs:
       
             - name: Update kubeconfig
               run: aws eks update-kubeconfig --name cluster --region us-east-1
-            
+
             - name: confirm that kubectl is updated
               run: kubectl config view --minify
 
@@ -103,7 +103,7 @@ jobs:
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
               run: cd starter/frontend/k8s && kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-              
+
             - name: Kube context
               run: kubectl config get-contexts
 
