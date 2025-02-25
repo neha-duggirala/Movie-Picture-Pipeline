@@ -52,30 +52,6 @@ jobs:
         - name: Run tests
           run: cd starter/backend && pipenv run test
   
-    build:
-      needs: [linting, testing]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-  
-        - name: Set up Python 3.10 
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.10' 
-    
-        - name: Install pipenv
-          run: pip install pipenv --user
-  
-        - name: Install dependencies
-          run: cd starter/backend && pipenv install
-  
-        - name: Build docker image
-          run: cd starter/backend && docker build --tag mp-backend:latest .
-          
-        - name: Run docker container
-          run: cd starter/backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
-  
     deploy:
         needs: [linting, testing]
         runs-on: ubuntu-latest
