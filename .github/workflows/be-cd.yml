@@ -1,0 +1,135 @@
+name: Backend CD Workflow
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - 'starter/backend/**'
+    workflow_dispatch:
+
+# Jobs in the workflow: linting, testing and build
+jobs:
+    linting:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+  
+        - name: Set up Python 3.10
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.10' 
+  
+        - name: Install pipenv
+          run: pip install pipenv --user
+  
+        - name: Install flake8
+          run: pip install flake8
+  
+        - name: Install dependencies
+          run: cd starter/backend && pipenv install
+  
+        - name: Run the linter
+          run: cd starter/backend && pipenv run lint
+  
+    testing:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+  
+        - name: Set up Python 3.10
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.10' 
+  
+        - name: Install pipenv
+          run: pip install pipenv --user      
+  
+        - name: Install dependencies
+          run: cd starter/backend && pipenv install
+  
+        - name: Run tests
+          run: cd starter/backend && pipenv run test
+  
+    build:
+      needs: [linting, testing]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+  
+        - name: Set up Python 3.10 
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.10' 
+    
+        - name: Install pipenv
+          run: pip install pipenv --user
+  
+        - name: Install dependencies
+          run: cd starter/backend && pipenv install
+  
+        - name: Build docker image
+          run: cd starter/backend && docker build --tag mp-backend:latest .
+          
+        - name: Run docker container
+          run: cd starter/backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
+  
+    deploy:
+        needs: [linting, testing]
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up Python 3.10
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.10' 
+
+        - name: Install pipenv
+          run: pip install pipenv --user
+
+        - name: Install dependencies
+          run: cd starter/backend && pipenv install
+
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v3
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-1  
+    
+        - name: Set up ECR login
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v2
+
+        - name: Build docker image with SHA 
+          env:
+            REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+            REPOSITORY: backend
+            IMAGE_TAG: ${{ github.sha }}
+          run: cd starter/backend && docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+
+        - name: Push to ECR
+          env:
+            REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+            REPOSITORY: backend
+            IMAGE_TAG: ${{ github.sha }}
+          run: cd starter/backend && docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+        - name: Update kubeconfig
+          run: aws eks update-kubeconfig --name cluster --region us-east-1
+
+        - name: Set image tag to newer version
+          env:
+            REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+            REPOSITORY: frontend
+            IMAGE_TAG: ${{ github.sha }}
+          run: cd starter/backend/k8s && kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+        - name: Deploy application to EKS cluster
+          run: cd starter/backend/k8s && kustomize build | kubectl apply -f -
+  
+   
