@@ -83,7 +83,7 @@ jobs:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
-              run: cd frontend && docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+              run: cd starter/frontend && docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       
             - name: Update kubeconfig
               run: aws eks update-kubeconfig --name cluster --region us-east-1
@@ -93,7 +93,7 @@ jobs:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
-              run: cd frontend/k8s && kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+              run: cd starter/frontend/k8s && kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
       
             - name: Deploy application to EKS cluster
               run: cd frontend/k8s && kustomize build | kubectl apply -f -
