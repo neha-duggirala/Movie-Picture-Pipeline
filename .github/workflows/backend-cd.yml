@@ -10,6 +10,10 @@ on:
     paths:
       - 'starter/backend/**'
 # Jobs in the workflow: linting, testing and build
+
+env:
+    REACT_APP_MOVIE_API_URL: https://a852b1d85816c49d9ad2c8237be986d1-753928157.us-east-1.elb.amazonaws.com
+
 jobs:
     linting:
       runs-on: ubuntu-latest
@@ -116,5 +120,13 @@ jobs:
         - name: Print Application URLs
           run: |
               kubectl get svc -A
+
+        - name: check if the backend is active
+          env:
+            REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
+          run: |
+              echo $REACT_APP_MOVIE_API_URL/movies
+              curl --max-time 10 $REACT_APP_MOVIE_API_URL/movies
+                
   
    
