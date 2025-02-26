@@ -100,6 +100,9 @@ jobs:
         - name: Update kubeconfig
           run: aws eks update-kubeconfig --name cluster --region us-east-1
 
+        - name: confirm that kubectl is updated
+          run: kubectl config view --minify
+
         - name: Set image tag to newer version
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
