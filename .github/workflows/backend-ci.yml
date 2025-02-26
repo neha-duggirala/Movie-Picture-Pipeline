@@ -16,6 +16,8 @@ on:
       - closed
     branches:
       - main
+    paths:
+      - 'starter/backend/**'
 
 # Jobs in the workflow: linting, testing and build
 jobs:
