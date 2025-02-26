@@ -3,11 +3,12 @@ name: Backend Continuous Deployment
 on:
   # Manual trigger using the workflow_dispatch event
   workflow_dispatch:
-  # Automatic trigger on push events targeting the main branch
-  push:
+  # Automatic trigger on pull_request events targeting the main branch
+  pull_request:
     branches:
       - main
-
+    paths:
+      - 'starter/backend/**'
 # Jobs in the workflow: linting, testing and build
 jobs:
     linting:

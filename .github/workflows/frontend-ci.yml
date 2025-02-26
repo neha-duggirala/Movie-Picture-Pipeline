@@ -4,6 +4,8 @@ on:
     pull_request:
         branches:
             - master
+        paths:
+            - 'starter/frontend/**'
     workflow_dispatch:
 jobs:
     lint:
