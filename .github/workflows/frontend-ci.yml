@@ -3,9 +3,10 @@ name: Frontend Continuous Integration
 on:
     pull_request:
         branches:
-            - master
+            - main
         paths:
             - 'starter/frontend/**'
+
     workflow_dispatch:
 jobs:
     lint:

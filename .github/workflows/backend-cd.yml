@@ -109,5 +109,9 @@ jobs:
 
         - name: Deploy application to EKS cluster
           run: cd starter/backend/k8s && kustomize build | kubectl apply -f -
+
+        - name: Print Application URLs
+          run: |
+              kubectl get svc -A
   
    
