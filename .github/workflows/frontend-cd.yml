@@ -9,7 +9,8 @@ on:
       - main
     paths:
       - 'starter/frontend/**'
-
+env:
+    REACT_APP_MOVIE_API_URL: https://a852b1d85816c49d9ad2c8237be986d1-753928157.us-east-1.elb.amazonaws.com
 jobs:
     lint:
         runs-on: ubuntu-latest
@@ -53,12 +54,12 @@ jobs:
               uses: actions/setup-node@v2
               with:
                 node-version: '14'
-
-            - name: Set environment variable
-              run: echo "REACT_APP_MOVIE_API_URL=https://a852b1d85816c49d9ad2c8237be986d1-753928157.us-east-1.elb.amazonaws.com" >> $GITHUB_ENV
-
+                
             - name: check if the backend is active
-              run: curl ${{ env.REACT_APP_MOVIE_API_URL }}/movies
+              run: curl $REACT_APP_MOVIE_API_URL/movies
+              env:
+                REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
+                
 
             - name: Install dependencies
               run: npm install
@@ -82,7 +83,8 @@ jobs:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
-              run: cd starter/frontend && docker build --build-arg REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+                REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
+              run: cd starter/frontend && docker build --build-arg=$REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
            
             - name: Push to ECR
               env:
