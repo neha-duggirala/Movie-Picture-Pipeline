@@ -3,10 +3,10 @@ name: Frontend Continuous Deployment
 
 # Triggers
 on:
-  # Manual trigger using the workflow_dispatch event
   workflow_dispatch:
-  # Automatic trigger on push events targeting the main branch
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
 
