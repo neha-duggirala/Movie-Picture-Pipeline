@@ -56,9 +56,11 @@ jobs:
                 node-version: '14'
                 
             - name: check if the backend is active
-              run: curl $REACT_APP_MOVIE_API_URL/movies
               env:
                 REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
+              run: |
+                 echo $REACT_APP_MOVIE_API_URL/movies
+                 curl --max-time 10 $REACT_APP_MOVIE_API_URL/movies
                 
 
             - name: Install dependencies
