@@ -55,7 +55,7 @@ jobs:
                 node-version: '14'
 
             - name: Create environment variable
-              run: REACT_APP_MOVIE_API_URL=https://58D318E473F5F49DAF0B2651C35BC298.gr7.us-east-1.eks.amazonaws.com
+              run: REACT_APP_MOVIE_API_URL=https://a852b1d85816c49d9ad2c8237be986d1-753928157.us-east-1.elb.amazonaws.com
 
             - name: Install dependencies
               run: npm install
