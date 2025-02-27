@@ -54,17 +54,12 @@ jobs:
               uses: actions/setup-node@v2
               with:
                 node-version: '14'
-                
-            # - name: check if the backend is active
-            #   env:
-            #     REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
-            #   run: |
-            #      echo $REACT_APP_MOVIE_API_URL/movies
-            #      curl --max-time 10 $REACT_APP_MOVIE_API_URL/movies
-                
 
             - name: Install dependencies
               run: npm install
+
+            - name: Create environment variable
+              run: REACT_APP_MOVIE_API_URL=http://a05560c09693545d9a1e1fd0313ffc9b-1622971913.us-east-1.elb.amazonaws.com
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v3
@@ -85,10 +80,9 @@ jobs:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
-                REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
               run: |
                 echo $REACT_APP_MOVIE_API_URL
-                cd starter/frontend && docker build --build-arg=$REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+                cd starter/frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
            
             - name: Push to ECR
               env:
