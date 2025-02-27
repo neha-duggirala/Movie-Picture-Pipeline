@@ -110,7 +110,7 @@ jobs:
         - name: Set image tag to newer version
           env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            REPOSITORY: frontend
+            REPOSITORY: backend
             IMAGE_TAG: ${{ github.sha }}
           run: cd starter/backend/k8s && kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
 
