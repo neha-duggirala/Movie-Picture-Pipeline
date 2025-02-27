@@ -10,7 +10,7 @@ on:
     paths:
       - 'starter/frontend/**'
 env:
-    REACT_APP_MOVIE_API_URL: a05560c09693545d9a1e1fd0313ffc9b-1622971913.us-east-1.elb.amazonaws.com 
+    REACT_APP_MOVIE_API_URL: http://a05560c09693545d9a1e1fd0313ffc9b-1622971913.us-east-1.elb.amazonaws.com
 jobs:
     lint:
         runs-on: ubuntu-latest
