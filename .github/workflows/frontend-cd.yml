@@ -86,7 +86,9 @@ jobs:
                 REPOSITORY: frontend
                 IMAGE_TAG: ${{ github.sha }}
                 REACT_APP_MOVIE_API_URL: ${{ env.REACT_APP_MOVIE_API_URL }}
-              run: cd starter/frontend && docker build --build-arg=$REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+              run: |
+                echo $REACT_APP_MOVIE_API_URL
+                cd starter/frontend && docker build --build-arg=$REACT_APP_MOVIE_API_URL -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
            
             - name: Push to ECR
               env:
